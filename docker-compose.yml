@@ -1,0 +1,15 @@
+services:
+  postgres-horarios:
+    image: postgres:16
+    container_name: postgres-horarios
+    restart: always
+    environment:
+      POSTGRES_USER: user_horarios
+      POSTGRES_PASSWORD: horarios123
+      POSTGRES_DB: horarios_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./horarios_postgres_data:/var/lib/postgresql/data
+volumes:
+  horarios_postgres_data:
