@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.core.conexion import test_connection, create_tables
 from app.api import examen_routes
+from app.api.auth_routes import router as auth_router
 
 # Crear la aplicación FastAPI
 app = FastAPI(
@@ -49,3 +50,7 @@ def health():
         "status": "healthy",
         "database": "connected"
     }
+
+
+# Registrar routers adicionales
+app.include_router(auth_router)
