@@ -1,0 +1,12 @@
+horarios_postgres_data/
+*.pyc
+__pycache__/
+.env
+.env.*
+*.sqlite3
+*.db
+.idea/
+.vscode/
+build/
+dist/
+.git

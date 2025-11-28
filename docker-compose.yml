@@ -2,7 +2,7 @@ services:
   postgres-horarios:
     image: postgres:16
     container_name: postgres-horarios
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: user_horarios
       POSTGRES_PASSWORD: horarios123
@@ -11,5 +11,18 @@ services:
       - "5433:5432"
     volumes:
       - ./horarios_postgres_data:/var/lib/postgresql/data
+  web:
+    build: .
+    container_name: horarios-backend-web
+    restart: unless-stopped
+    environment:
+      # La app dentro del contenedor se conecta al servicio postgres por su nombre de servicio
+      - DATABASE_URL=postgresql://user_horarios:horarios123@postgres-horarios:5432/horarios_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-horarios
+    volumes:
+      - .:/app
 volumes:
   horarios_postgres_data:
