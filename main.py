@@ -54,3 +54,4 @@ def health():
 
 # Registrar routers adicionales
 app.include_router(auth_router)
+app.include_router(examen_routes.router)
