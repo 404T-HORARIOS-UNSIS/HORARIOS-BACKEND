@@ -18,14 +18,26 @@ Poetry:
 poetry install
 ```
 
-### Levantar la base de datos
+### Ejecución con Docker (Todo incluido)
+
+Para levantar la aplicación y la base de datos en contenedores:
 
 ```bash
-docker-compose up -d
+docker-compose up --build -d
 ```
 
-### Ejecutar la aplicación
+La API estará disponible en: http://localhost:8000
 
+### Ejecución Manual (Desarrollo Local)
+
+Si deseas desarrollar localmente:
+
+1. Levantar solo la base de datos:
+```bash
+docker-compose up -d postgres-horarios
+```
+
+2. Ejecutar la aplicación:
 ```bash
 uvicorn main:app --reload
 ```
