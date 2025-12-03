@@ -16,12 +16,23 @@ services:
     container_name: horarios-backend-web
     restart: unless-stopped
     environment:
-      # La app dentro del contenedor se conecta al servicio postgres por su nombre de servicio
-      - DATABASE_URL=postgresql://user_horarios:horarios123@postgres-horarios:5432/horarios_db
+      DATABASE_URL: postgresql://user_horarios:horarios123@postgres-horarios:5432/horarios_db
     ports:
       - "8000:8000"
     depends_on:
       - postgres-horarios
+    volumes:
+      - .:/app
+  tests:
+    build: .
+    container_name: horarios-backend-tests
+    depends_on:
+      - postgres-horarios
+    environment:
+      DATABASE_URL: postgresql://user_horarios:horarios123@postgres-horarios:5432/horarios_db
+      PYTHONPATH: /app
+    working_dir: /app
+    command: ["sh", "-c", "pip install -q pytest pytest-asyncio && pytest -q"]
     volumes:
       - .:/app
 volumes:
