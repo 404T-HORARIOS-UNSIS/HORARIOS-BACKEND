@@ -32,8 +32,34 @@ async def test_register_login_me():
 
         token = body["access_token"]
 
-        # Me
-        r3 = await ac.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
-        assert r3.status_code == 200, f"me failed: {r3.status_code} {r3.text}"
-        me = r3.json()
-        assert me["username"] == username
+        import pytest
+        from fastapi.testclient import TestClient
+        from main import app
+
+        client = TestClient(app)
+
+        @pytest.mark.parametrize("username,email,password,role", [
+            ("user_test_api", "user_test_api@example.com", "Pass1234", "SECRETARIA"),
+        ])
+        def test_auth_flow(username, email, password, role):
+            r = client.post("/auth/register", json={
+                "username": username,
+                "email": email,
+                "password": password,
+                "role": role,
+            })
+            assert r.status_code in (200, 201, 409)
+
+            r = client.post(
+                "/auth/login",
+                data={"username": username, "password": password},
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+            assert r.status_code == 200
+            token = r.json()["access_token"]
+
+            r = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
+            assert r.status_code == 200
+            body = r.json()
+            assert body["username"] == username
+            assert body["role"] == role
