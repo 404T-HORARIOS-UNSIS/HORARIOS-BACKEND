@@ -1,6 +1,6 @@
-# Consuming the Horarios API
+# Consumo de la API de Horarios
 
-Esta guía explica cómo consumir la API de Horarios desde el frontend. Incluye endpoints clave, ejemplos (curl, fetch, axios), formato de autenticación y recomendaciones para manejo de tokens.
+Guía práctica para integrar el frontend con la API: endpoints clave, ejemplos (curl, fetch, axios), autenticación y manejo de tokens.
 
 Base URL (desarrollo)
 - http://localhost:8000
@@ -9,24 +9,16 @@ Documentación interactiva
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
-Variables de entorno para el front
+Variables de entorno (frontend)
 - Archivo sugerido: `.env.example` (en la raíz del repositorio)
 - Variables importantes:
   - VITE_API_URL=http://localhost:8000  # o REACT_APP_API_URL según tu stack
 
-- La API usa JWT (Bearer token).
-- Pasos:
-  1. Registrar usuario (si aplica): `POST /auth/register` (JSON)
-  2. Hacer login: `POST /auth/login` (form-urlencoded) — devuelve `access_token`.
-  3. Incluir en requests protegidos: header `Authorization: Bearer <ACCESS_TOKEN>`.
-  
-  Roles permitidos: `ADMIN`, `JEFE_CARRERA`, `JEFE_ESCOLARES`, `SECRETARIA`.
-
-- La API usa JWT (Bearer token).
-- Pasos:
-  1. Registrar usuario (si aplica): `POST /auth/register` (JSON)
-  2. Hacer login: `POST /auth/login` (form-urlencoded) — devuelve `access_token`.
-  3. Incluir en requests protegidos: header `Authorization: Bearer <ACCESS_TOKEN>`.
+Autenticación (JWT Bearer)
+- 1) Registrar usuario: `POST /auth/register` (JSON)
+- 2) Login: `POST /auth/login` (x-www-form-urlencoded) — devuelve `access_token`.
+- 3) Usar el token en endpoints protegidos: `Authorization: Bearer <ACCESS_TOKEN>`.
+- Roles permitidos: `ADMIN`, `JEFE_CARRERA`, `JEFE_ESCOLARES`, `SECRETARIA`.
 
 Endpoints clave (resumen)
 - POST /auth/register — registrar usuario
@@ -54,7 +46,7 @@ Ejemplos prácticos
 ```bash
 curl -X POST http://localhost:8000/auth/register \
   -H 'Content-Type: application/json' \
-  -d '{"username":"juan","email":"juan@example.com","password":"mipass123","role":"user"}'
+  -d '{"username":"juan","email":"juan@example.com","password":"mipass123","role":"SECRETARIA"}'
 ```
 
 - cURL: login (form)
@@ -97,22 +89,21 @@ const api = axios.create({ baseURL: process.env.REACT_APP_API_URL || 'http://loc
 // ejemplo: setear token manualmente
 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-// o usar interceptor para refrescar token en el futuro
+// si implementas refresh tokens, aquí puedes manejar la renovación
 ```
 
-Recomendaciones para el frontend
-- Almacenar token con cuidado: usar cookies HttpOnly+Secure cuando sea posible. Evitar `localStorage` si puedes.
-- Manejar expiración: si obtienes 401 por token expirado, redirigir a login o implementar flujo de refresh tokens (no disponible actualmente).
-- Probar con Swagger UI en desarrollo para ver esquemas y ejemplos automáticos.
+Recomendaciones
+- Token: preferir cookies HttpOnly+Secure cuando sea viable. Evitar `localStorage` si es posible.
+- Expiración: ante 401 por token expirado, redirige a login o implementa refresh tokens (no incluido por defecto).
+- Desarrollo: usa Swagger UI para validar contratos y probar rápidamente.
 
 Errores comunes y cómo interpretarlos
 - 400 Bad Request: datos inválidos o usuario ya existe.
 - 401 Unauthorized: token inválido o expirado.
 - 500 Internal Server Error: revisar logs del backend (p. ej. errores de hashing, BD, etc.).
 
-Testing y herramientas
-- Puedes importar una colección Postman (no incluida por defecto). Si la quieres, puedo generarla.
-- Para tests automáticos del frontend, apuntar a una instancia local (`VITE_API_URL=http://localhost:8000`) o a un entorno de staging.
+Testing
+- Para tests del frontend, apunta a una instancia local (`VITE_API_URL=http://localhost:8000`) o a un entorno de staging.
 
 Contacto
-- Si falta algún endpoint, cambia el contrato o quieres ejemplos en otro formato (Postman/Insomnia/CPP), dime y lo agrego.
+- Si necesitas otros ejemplos (Postman/Insomnia) o detectar cambios de contrato, abre un issue en el repositorio.
